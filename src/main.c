@@ -7,7 +7,6 @@
 
 
 int main(void){
-    //HSE_8M_CLOCK_CONFIG();
     SP_init();
     SP_Pin_setModo(SP_PB9,SP_PIN_ENTRADA_PULLUP);
     SP_Pin_setModo(SP_LED,SP_PIN_SALIDA);

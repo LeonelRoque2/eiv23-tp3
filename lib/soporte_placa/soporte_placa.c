@@ -162,10 +162,10 @@ void SP_Pin_setModo(SP_HPin hPin,SP_Pin_Modo modo){
 
 bool SP_Pin_read(SP_HPin hPin){              //Funcion para leer pin
     bool pin_state;                          //Declaro la variable de salida
-    if(hPin >= SP_HPIN_LIMITE) return false;       //Si el pin no es válido deja de ejecutar
+    if(hPin >= SP_HPIN_LIMITE) return false; //Si el pin no es válido deja de ejecutar
     Pin const *pin = pinDeHandle(hPin);      //Obtengo el puerto del pin y el numero del mismo
     uint32_t const PIN_ON = (1<<pin->nrPin); // Declaro una constante que es un 1 desplazado el numero de pin (9 o 13)
-    if((pin->puerto->IDR & PIN_ON) == 0) {   //Comparo el registro ODR con la constante antes declarada
+    if((pin->puerto->IDR & PIN_ON) == 0) {   //Comparo el registro IDR con la constante antes declarada
         pin_state = false;                   //Si el bit en la posición "nrPin" es cero, pin_state es 0
     }else{
         pin_state = true;                    //De lo contrario será 1
@@ -183,25 +183,3 @@ void SP_Pin_write(SP_HPin hPin, bool valor){
         pin->puerto->BSRR = (1<<(pin->nrPin+16)); //Modifico el bit correspondiente (desde el bit 16 al 32)
     }
 }
-
-void HSE_8M_CLOCK_CONFIG (void) {
-
-    enum {
-    CR_HSE_ON = (1<<16), //Un registro con todo 0 excepto el bit 16
-    CR_HSE_READY = (1<<17), //Un registro con todo 0 excepto el bit 17
-    CFGR_SW_MASK = (3<<0), //Un registro terminado en 11    
-    CFGR_SW_HSE = (1<<0), //Registro terminado en 1
-    CFGR_SWS_MASK = (3<<2), //Registro con 11 desplazado 2 bits
-    CFGR_SWS_READY = (1<<2) //Registro con 1 desplazado 2 bits 
-};
-
-    RCC->CR = RCC->CR | CR_HSE_ON; //Activo el bit 16 de RCC->CR, equivalente a: RCC->CR |= CR_HSE_ON;
-    while (!(RCC->CR & CR_HSE_READY)) continue; //Si el registro de la condicion tiene al menos un 1, la ejecucion continua
-    RCC->CFGR = (RCC->CFGR & ~CFGR_SW_MASK) | CFGR_SW_HSE; //Pongo en 01 los dos ultimos bits de RCC->CFGR
-    while((RCC->CFGR & CFGR_SWS_MASK) == CFGR_SWS_READY) continue; //Si CFGR[3,2] = [01] continuo
-    RCC->CFGR &= ~(1<<7); //Configuro prescaler 
-    RCC->CFGR &= ~(1<<10); //Configuro prescaler de baja velocidad
-    RCC->CFGR &= ~(1<<13); //Configuro prescaler de alta velocidad 
-    SystemCoreClockUpdate(); //Actualizo las configuraciones del reloj 
-}
-

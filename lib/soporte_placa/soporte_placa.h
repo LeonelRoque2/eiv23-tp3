@@ -76,7 +76,4 @@ void SP_init(void);
  */
 void SP_delay(uint32_t tiempo);
 
-
-void HSE_8M_CLOCK_CONFIG (void);
-
 #endif
